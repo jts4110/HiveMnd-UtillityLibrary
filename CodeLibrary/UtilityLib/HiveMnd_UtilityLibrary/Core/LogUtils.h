@@ -1,51 +1,74 @@
 #pragma once
-#include <iostream>
 #include <string>
 #include <fstream>
-#include "TimeUtils.h" 
+#include <mutex>
 
-// ============================================================================
-// LOG UTILS - Core logging system for HiveMnd Utility Library
-// ----------------------------------------------------------------------------
-// Provides simple static logging functions for console and file output.
-// Logs can include timestamps and log levels (INFO, WARN, ERROR, DEBUG).
-// ============================================================================
-
-class LogUtils
+// -----------------------------------------------------------------------------
+//  Utility: HiveMnd::Core::LogUtils
+//  Purpose : Provides leveled logging with timestamping, colorized console
+//            output, and optional file writing for HiveMnd projects.
+//  Notes   : Thread-safe and compatible with TimeUtils + DebugUtils.
+// -----------------------------------------------------------------------------
+namespace HiveMnd::Core
 {
-public:
-    // Enumeration for log levels
     enum class LogLevel
     {
-        INFO,
-        WARNING,
-        ERROR,
-        DEBUG
+        Info,
+        Warning,
+        Error,
+        Debug
     };
 
-    // Enables or disables timestamp printing
-    static bool sShowTimestamp;
+    class LogUtils
+    {
+    private:
+        static inline bool sEnableColors = true;
+        static inline bool sShowTimestamp = true;
+        static inline bool sLogToFile = false;
+        static inline std::string sLogFilePath = "HiveMnd_Log.txt";
+        static inline std::ofstream sLogFile;
+        static inline std::mutex sLogMutex;
 
-    // Enables or disables debug log printing
-    static bool sEnableDebug;
+        // Internal helper for writing formatted output
+        static void Write(const std::string& prefix,
+            const std::string& message,
+            const std::string& colorCode);
 
-    // Sets a log file path for file output (optional)
-    static void SetLogFile(const std::string& filePath);
+    public:
+        // ---------------------------------------------------------------------
+        //  Function: Initialize
+        //  Purpose : Prepares log file if file logging is enabled.
+        // ---------------------------------------------------------------------
+        static void Initialize(bool logToFile = false,
+            const std::string& filePath = "HiveMnd_Log.txt");
 
-    // Main log function - prints message with level
-    static void Log(const std::string& message, LogLevel level = LogLevel::INFO);
+        // ---------------------------------------------------------------------
+        //  Function: Shutdown
+        //  Purpose : Closes any open log file.
+        // ---------------------------------------------------------------------
+        static void Shutdown();
 
-    // Specialized shortcuts
-    static void Info(const std::string& message);
-    static void Warn(const std::string& message);
-    static void Error(const std::string& message);
-    static void Debug(const std::string& message);
+        // ---------------------------------------------------------------------
+        //  Function: SetShowTimestamp
+        //  Purpose : Enable or disable timestamp display.
+        // ---------------------------------------------------------------------
+        static void SetShowTimestamp(bool enable);
 
-private:
-    // Converts log level enum to a readable string
-    static std::string LevelToString(LogLevel level);
+        // ---------------------------------------------------------------------
+        //  Function: SetEnableColors
+        //  Purpose : Enable or disable colored console output.
+        // ---------------------------------------------------------------------
+        static void SetEnableColors(bool enable);
 
-    // Optional file stream for writing logs to disk
-    static std::ofstream sLogFile;
-};
+        // ---------------------------------------------------------------------
+        //  Function: Info / Warning / Error / Debug
+        //  Purpose : Main logging functions with level categorization.
+        // ---------------------------------------------------------------------
+        static void Info(const std::string& message);
+        static void Warning(const std::string& message);
+        static void Error(const std::string& message);
+        static void Debug(const std::string& message);
+    };
+}
+
 

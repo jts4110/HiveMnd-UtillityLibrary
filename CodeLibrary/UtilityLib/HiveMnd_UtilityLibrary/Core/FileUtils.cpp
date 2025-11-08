@@ -1,3 +1,4 @@
+#define _CRT_SECURE_NO_WARNINGS
 #include "FileUtils.h"
 #include <fstream>          // for reading and writing files
 #include <filesystem>       // for checking file existence and size

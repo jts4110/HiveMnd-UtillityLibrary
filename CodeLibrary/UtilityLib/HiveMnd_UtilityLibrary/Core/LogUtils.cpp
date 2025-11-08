@@ -1,84 +1,119 @@
-#include "LogUtils.h"
+#include "Core/LogUtils.h"
 #include "Core/TimeUtils.h"
+#include "Core/DebugUtils.h"
+
+#include <iostream>
 #include <iomanip>
+#include <sstream>
+#include <chrono>
 
-// Initialize static variables
-bool LogUtils::sShowTimestamp = true;
-bool LogUtils::sEnableDebug = true;
-std::ofstream LogUtils::sLogFile;
+using namespace HiveMnd::Core;
 
-// ============================================================================
-// Sets the file path for log output
-// ============================================================================
-void LogUtils::SetLogFile(const std::string& filePath)
+// -----------------------------------------------------------------------------
+//  Function: Initialize
+//  Purpose : Opens a file for logging if enabled.
+// -----------------------------------------------------------------------------
+void LogUtils::Initialize(bool logToFile, const std::string& filePath)
+{
+    sLogToFile = logToFile;
+    sLogFilePath = filePath;
+
+    if (sLogToFile)
+    {
+        sLogFile.open(sLogFilePath, std::ios::out | std::ios::app);
+        if (!sLogFile.is_open())
+        {
+            DebugUtils::Trace("[LogUtils] Failed to open log file: " + sLogFilePath);
+        }
+    }
+}
+
+// -----------------------------------------------------------------------------
+//  Function: Shutdown
+//  Purpose : Closes the open log file safely.
+// -----------------------------------------------------------------------------
+void LogUtils::Shutdown()
 {
     if (sLogFile.is_open())
         sLogFile.close();
-
-    sLogFile.open(filePath, std::ios::out | std::ios::app);
-    if (!sLogFile)
-    {
-        std::cerr << "[LogUtils] Failed to open log file: " << filePath << std::endl;
-    }
 }
 
-// ============================================================================
-// Converts log level enum to string
-// ============================================================================
-std::string LogUtils::LevelToString(LogLevel level)
+// -----------------------------------------------------------------------------
+//  Function: SetShowTimestamp
+// -----------------------------------------------------------------------------
+void LogUtils::SetShowTimestamp(bool enable)
 {
-    switch (level)
-    {
-    case LogLevel::INFO: return "INFO";
-    case LogLevel::WARNING: return "WARNING";
-    case LogLevel::ERROR: return "ERROR";
-    case LogLevel::DEBUG: return "DEBUG";
-    default: return "UNKNOWN";
-    }
+    sShowTimestamp = enable;
 }
 
-// ============================================================================
-// Logs a message with a given level and optional timestamp
-// ============================================================================
-void LogUtils::Log(const std::string& message, LogLevel level)
+// -----------------------------------------------------------------------------
+//  Function: SetEnableColors
+// -----------------------------------------------------------------------------
+void LogUtils::SetEnableColors(bool enable)
 {
-    if (level == LogLevel::DEBUG && !sEnableDebug)
-        return; // Skip debug logs if disabled
-
-    std::string timeStr = sShowTimestamp ? "[" + TimeUtils::GetTimestamp() + "] " : "";
-    std::string levelStr = "[" + LevelToString(level) + "] ";
-
-    std::string formatted = timeStr + levelStr + message;
-
-    // Print to console
-    std::cout << formatted << std::endl;
-
-    // Write to file if one is open
-    if (sLogFile.is_open())
-    {
-        sLogFile << formatted << std::endl;
-    }
+    sEnableColors = enable;
 }
 
-// ============================================================================
-// Convenience wrappers for specific log types
-// ============================================================================
+// -----------------------------------------------------------------------------
+//  Function: Write
+//  Purpose : Handles synchronized console + file output.
+// -----------------------------------------------------------------------------
+void LogUtils::Write(const std::string& prefix,
+    const std::string& message,
+    const std::string& colorCode)
+{
+    std::lock_guard<std::mutex> lock(sLogMutex);
+
+    std::ostringstream oss;
+
+    if (sShowTimestamp)
+        oss << "[" << TimeUtils::GetTimestamp() << "] ";
+
+    oss << prefix << ": " << message;
+
+    std::string finalMsg = oss.str();
+
+    // Console output
+    if (sEnableColors)
+        std::cout << colorCode << finalMsg << "\033[0m" << std::endl;
+    else
+        std::cout << finalMsg << std::endl;
+
+    // File output
+    if (sLogToFile && sLogFile.is_open())
+        sLogFile << finalMsg << std::endl;
+}
+
+// -----------------------------------------------------------------------------
+//  Function: Info
+// -----------------------------------------------------------------------------
 void LogUtils::Info(const std::string& message)
 {
-    Log(message, LogLevel::INFO);
+    Write("[INFO]", message, "\033[36m"); // Cyan
 }
 
-void LogUtils::Warn(const std::string& message)
+// -----------------------------------------------------------------------------
+//  Function: Warning
+// -----------------------------------------------------------------------------
+void LogUtils::Warning(const std::string& message)
 {
-    Log(message, LogLevel::WARNING);
+    Write("[WARN]", message, "\033[33m"); // Yellow
 }
 
+// -----------------------------------------------------------------------------
+//  Function: Error
+// -----------------------------------------------------------------------------
 void LogUtils::Error(const std::string& message)
 {
-    Log(message, LogLevel::ERROR);
+    Write("[ERROR]", message, "\033[31m"); // Red
 }
 
+// -----------------------------------------------------------------------------
+//  Function: Debug
+// -----------------------------------------------------------------------------
 void LogUtils::Debug(const std::string& message)
 {
-    Log(message, LogLevel::DEBUG);
+#ifdef _DEBUG
+    Write("[DEBUG]", message, "\033[35m"); // Magenta
+#endif
 }
