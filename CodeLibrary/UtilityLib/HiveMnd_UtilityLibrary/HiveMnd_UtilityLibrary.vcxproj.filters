@@ -131,7 +131,7 @@
     <ClInclude Include="Data\JSONUtils.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Data\ThreadUtils.h">
+    <ClInclude Include="Threading\ThreadUtils.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
