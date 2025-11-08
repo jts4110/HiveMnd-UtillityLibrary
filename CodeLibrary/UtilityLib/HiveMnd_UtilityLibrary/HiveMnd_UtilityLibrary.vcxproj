@@ -130,6 +130,7 @@
   <ItemGroup>
     <ClCompile Include="Core\LogUtils.cpp" />
     <ClCompile Include="Core\StringUtils.cpp" />
+    <ClCompile Include="Core\SystemUtils.cpp" />
     <ClCompile Include="Core\TimeUtils.cpp" />
     <ClCompile Include="hivemnd_utilitylibrary\HiveMnd_UtilityLibrary.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
@@ -141,6 +142,7 @@
   <ItemGroup>
     <ClInclude Include="Core\LogUtils.h" />
     <ClInclude Include="Core\StringUtils.h" />
+    <ClInclude Include="Core\SystemUtils.h" />
     <ClInclude Include="Core\TimeUtils.h" />
     <ClInclude Include="Utility.h" />
   </ItemGroup>
