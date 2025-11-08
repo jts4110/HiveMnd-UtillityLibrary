@@ -86,5 +86,8 @@
     <ClInclude Include="Math\MatrixUtils.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Math\AdvancedMath.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
