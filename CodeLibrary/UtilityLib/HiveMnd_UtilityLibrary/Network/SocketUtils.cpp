@@ -1,3 +1,5 @@
+#define _WINSOCK_DEPRECATED_NO_WARNINGS
+
 #include "SocketUtils.h"
 
 #include <iostream>
@@ -100,8 +102,8 @@ namespace HiveMnd::Network
     {
         sockaddr_in client{};
         socklen_t len = sizeof(client);
-        int newSock = accept(mSocket, (sockaddr*)&client, &len);
-        if (newSock < 0)
+        SOCKET newSock = accept(mSocket, (sockaddr*)&client, &len);
+        if (newSock == INVALID_SOCKET)
             return nullptr;
 
         Socket* clientSock = new Socket(SocketProtocol::TCP);
