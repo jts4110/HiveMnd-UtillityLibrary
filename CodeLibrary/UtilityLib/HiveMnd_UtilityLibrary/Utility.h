@@ -4,6 +4,10 @@
 #include <limits>
 #include <vector>
 
+#define NOMINMAX
+#include <windows.h>
+
+
 // ============================================================================
 //  Project : HiveMnd Utility Library
 //  File    : Utility.h
