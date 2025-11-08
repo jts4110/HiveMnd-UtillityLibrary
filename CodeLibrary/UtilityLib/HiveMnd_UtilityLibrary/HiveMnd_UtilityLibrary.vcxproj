@@ -128,6 +128,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Core\FileUtils.cpp" />
     <ClCompile Include="Core\LogUtils.cpp" />
     <ClCompile Include="Core\StringUtils.cpp" />
     <ClCompile Include="Core\SystemUtils.cpp" />
@@ -140,6 +141,7 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Core\FileUtils.h" />
     <ClInclude Include="Core\LogUtils.h" />
     <ClInclude Include="Core\StringUtils.h" />
     <ClInclude Include="Core\SystemUtils.h" />
