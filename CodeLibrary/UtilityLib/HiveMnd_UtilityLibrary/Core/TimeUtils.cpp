@@ -1,88 +1,74 @@
 #include "TimeUtils.h"
-#include <iomanip> // for std::put_time
-#include <sstream> // for std::stringstream
 
-/*
-============================================================
-File: TimeUtils.cpp
-Implements the static methods declared in TimeUtils.h.
-============================================================
-*/
-
-namespace HiveMnd
+namespace TimeUtils
 {
-    namespace Core
+    // GetTimestamp
+    // --------------------------------------------
+    // Builds a formatted string for the current
+    // date and time using the system clock.
+    // Example output: "2025-11-08 12:34:56"
+    // --------------------------------------------
+    std::string GetTimestamp()
     {
-        // ============================================================
-        // Returns the current local system time as HH:MM:SS
-        // ============================================================
-        std::string TimeUtils::GetCurrentTimeString()
-        {
-            auto now = std::chrono::system_clock::now();
-            std::time_t timeNow = std::chrono::system_clock::to_time_t(now);
+        auto now = std::chrono::system_clock::now();
+        std::time_t nowTime = std::chrono::system_clock::to_time_t(now);
 
-            std::tm localTime{};
-#ifdef _WIN32
-            localtime_s(&localTime, &timeNow);
-#else
-            localtime_r(&timeNow, &localTime);
-#endif
+        std::tm localTime{};
+        localtime_s(&localTime, &nowTime);
 
-            std::stringstream ss;
-            ss << std::put_time(&localTime, "%H:%M:%S");
-            return ss.str();
-        }
+        std::ostringstream oss;
+        oss << std::put_time(&localTime, "%Y-%m-%d %H:%M:%S");
+        return oss.str();
+    }
 
-        // ============================================================
-        // Returns the current date as YYYY-MM-DD
-        // ============================================================
-        std::string TimeUtils::GetDateString()
-        {
-            auto now = std::chrono::system_clock::now();
-            std::time_t timeNow = std::chrono::system_clock::to_time_t(now);
+    // GetDate
+    // --------------------------------------------
+    // Returns only the current date.
+    // Example output: "2025-11-08"
+    // --------------------------------------------
+    std::string GetDate()
+    {
+        auto now = std::chrono::system_clock::now();
+        std::time_t nowTime = std::chrono::system_clock::to_time_t(now);
 
-            std::tm localTime{};
-#ifdef _WIN32
-            localtime_s(&localTime, &timeNow);
-#else
-            localtime_r(&timeNow, &localTime);
-#endif
+        std::tm localTime{};
+        localtime_s(&localTime, &nowTime);
 
-            std::stringstream ss;
-            ss << std::put_time(&localTime, "%Y-%m-%d");
-            return ss.str();
-        }
+        std::ostringstream oss;
+        oss << std::put_time(&localTime, "%Y-%m-%d");
+        return oss.str();
+    }
 
-        // ============================================================
-        // Combines date and time into a compact timestamp format
-        // Example: 20251108_114600
-        // ============================================================
-        std::string TimeUtils::GetTimestamp()
-        {
-            auto now = std::chrono::system_clock::now();
-            std::time_t timeNow = std::chrono::system_clock::to_time_t(now);
+    // GetTime
+    // --------------------------------------------
+    // Returns only the current time.
+    // Example output: "12:34:56"
+    // --------------------------------------------
+    std::string GetTime()
+    {
+        auto now = std::chrono::system_clock::now();
+        std::time_t nowTime = std::chrono::system_clock::to_time_t(now);
 
-            std::tm localTime{};
-#ifdef _WIN32
-            localtime_s(&localTime, &timeNow);
-#else
-            localtime_r(&timeNow, &localTime);
-#endif
+        std::tm localTime{};
+        localtime_s(&localTime, &nowTime);
 
-            std::stringstream ss;
-            ss << std::put_time(&localTime, "%Y%m%d_%H%M%S");
-            return ss.str();
-        }
+        std::ostringstream oss;
+        oss << std::put_time(&localTime, "%H:%M:%S");
+        return oss.str();
+    }
 
-        // ============================================================
-        // Returns how many milliseconds have elapsed since 'start'.
-        // This helps measure function or loop execution time.
-        // ============================================================
-        long long TimeUtils::GetElapsedMilliseconds(std::chrono::steady_clock::time_point start)
-        {
-            auto now = std::chrono::steady_clock::now();
-            auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(now - start);
-            return duration.count();
-        }
+    // GetMilliseconds
+    // --------------------------------------------
+    // Returns the number of milliseconds since the
+    // Unix epoch (January 1, 1970). Useful for
+    // precise timing or performance measurement.
+    // --------------------------------------------
+    long long GetMilliseconds()
+    {
+        auto now = std::chrono::system_clock::now();
+        auto ms = std::chrono::duration_cast<std::chrono::milliseconds>(
+            now.time_since_epoch()).count();
+        return ms;
     }
 }
+

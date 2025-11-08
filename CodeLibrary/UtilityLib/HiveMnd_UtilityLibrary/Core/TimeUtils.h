@@ -2,78 +2,37 @@
 #include <string>
 #include <chrono>
 #include <ctime>
+#include <iomanip>
+#include <sstream>
 
-/*
-============================================================
-File: TimeUtils.h
-Purpose: Provides time-related helper functions for the
-HiveMnd Utility Library Core module.
-============================================================
-*/
+//
+// TimeUtils
+// --------------------------------------------
+// Provides helper functions for working with
+// system time, including timestamps, dates,
+// and time strings with optional millisecond
+// precision.
+//
+// Example usage:
+//     std::string ts = TimeUtils::GetTimestamp();
+//     std::string ms = TimeUtils::GetMilliseconds();
+// --------------------------------------------
+//
 
-namespace HiveMnd
+namespace TimeUtils
 {
-    namespace Core
-    {
-        /*
-        ============================================================
-        Class: TimeUtils
-        Description:
-            - Contains static methods for time management, formatting,
-              and elapsed-time calculations.
-            - Used throughout HiveMnd for timestamps and profiling.
-        ============================================================
-        */
-        class TimeUtils
-        {
-        public:
-            /*
-            ============================================================
-            Function: GetCurrentTimeString
-            Returns: std::string
-            Description:
-                Gets the current system time and formats it as
-                HH:MM:SS (24-hour format). Often used for logs.
-            ============================================================
-            */
-            static std::string GetCurrentTimeString();
+    // Returns a full timestamp in the format "YYYY-MM-DD HH:MM:SS"
+    std::string GetTimestamp();
 
-            /*
-            ============================================================
-            Function: GetDateString
-            Returns: std::string
-            Description:
-                Gets the current date formatted as YYYY-MM-DD.
-                Useful for reports, filenames, or logging.
-            ============================================================
-            */
-            static std::string GetDateString();
+    // Returns only the date in the format "YYYY-MM-DD"
+    std::string GetDate();
 
-            /*
-            ============================================================
-            Function: GetTimestamp
-            Returns: std::string
-            Description:
-                Returns a compact string containing both date and
-                time in the format YYYYMMDD_HHMMSS.
-                Great for unique filenames or log entries.
-            ============================================================
-            */
-            static std::string GetTimestamp();
+    // Returns only the time in the format "HH:MM:SS"
+    std::string GetTime();
 
-            /*
-            ============================================================
-            Function: GetElapsedMilliseconds
-            Parameters: std::chrono::steady_clock::time_point start
-            Returns: long long
-            Description:
-                Calculates how many milliseconds have passed since
-                a given start time. Useful for profiling execution
-                time of operations or loops.
-            ============================================================
-            */
-            static long long GetElapsedMilliseconds(std::chrono::steady_clock::time_point start);
-        };
-    }
+    // Returns the current time in milliseconds since epoch
+    // Useful for measuring performance or generating unique IDs
+    long long GetMilliseconds();
 }
+
 
