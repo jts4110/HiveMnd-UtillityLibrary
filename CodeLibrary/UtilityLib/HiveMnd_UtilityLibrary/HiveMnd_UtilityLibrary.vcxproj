@@ -149,6 +149,7 @@
     <ClCompile Include="Network\NetProfiler.cpp" />
     <ClCompile Include="Network\NetworkUtils.cpp" />
     <ClCompile Include="Network\SocketUtils.cpp" />
+    <ClCompile Include="Threading\ThreadPool.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Core\DebugUtils.h" />
@@ -159,6 +160,7 @@
     <ClInclude Include="Core\StringUtils.h" />
     <ClInclude Include="Core\SystemUtils.h" />
     <ClInclude Include="Core\TimeUtils.h" />
+    <ClInclude Include="Threading\ThreadPool.h" />
     <ClInclude Include="Threading\ThreadUtils.h" />
     <ClInclude Include="Data\JSONUtils.h" />
     <ClInclude Include="Math\AdvancedMath.h" />
