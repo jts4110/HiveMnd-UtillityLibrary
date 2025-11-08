@@ -144,6 +144,7 @@
     </ClCompile>
     <ClCompile Include="Network\AdvancedNet.cpp" />
     <ClCompile Include="Network\HttpUtils.cpp" />
+    <ClCompile Include="Network\NetProfiler.cpp" />
     <ClCompile Include="Network\NetworkUtils.cpp" />
     <ClCompile Include="Network\SocketUtils.cpp" />
   </ItemGroup>
@@ -164,6 +165,7 @@
     <ClInclude Include="Math\Vector3.h" />
     <ClInclude Include="Network\AdvancedNet.h" />
     <ClInclude Include="Network\HttpUtils.h" />
+    <ClInclude Include="Network\NetProfiler.h" />
     <ClInclude Include="Network\NetworkUtils.h" />
     <ClInclude Include="Network\SocketUtils.h" />
     <ClInclude Include="Utility.h" />
