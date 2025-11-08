@@ -18,9 +18,15 @@
     <ClCompile Include="hivemnd_utilitylibrary\HiveMnd_UtilityLibrary.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Core\StringUtils.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Utility.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\StringUtils.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
