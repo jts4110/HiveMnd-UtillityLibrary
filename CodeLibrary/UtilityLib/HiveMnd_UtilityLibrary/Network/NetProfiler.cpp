@@ -1,149 +1,139 @@
-#include "NetProfiler.h"
-
-#ifdef _WIN32
 #define _WINSOCK_DEPRECATED_NO_WARNINGS
-#include <winsock2.h>
-#include <ws2tcpip.h>
-#pragma comment(lib, "ws2_32.lib")
-#else
-#include <arpa/inet.h>
-#include <unistd.h>
-#endif
-
+#include "NetProfiler.h"
+#include "../Core/LogUtils.h"
 #include <iostream>
-#include <cstring>
+#include <thread>
+#include <chrono>
+#include <numeric>
+#include <winsock2.h>
+#pragma comment(lib, "ws2_32.lib")
 
-namespace HiveMnd
+using namespace HiveMnd;
+
+std::vector<PingResult> NetProfiler::RunPingTest(const std::string& host, int port, int attempts)
 {
-    // Helper to ensure Winsock is initialized (Windows only)
-    static void InitSockets()
+    std::vector<PingResult> results;
+    WSADATA wsaData;
+    if (WSAStartup(MAKEWORD(2, 2), &wsaData) != 0)
     {
-#ifdef _WIN32
-        static bool initialized = false;
-        if (!initialized)
-        {
-            WSADATA wsa;
-            WSAStartup(MAKEWORD(2, 2), &wsa);
-            initialized = true;
-        }
-#endif
+        HiveMnd::Core::LogUtils::Error("WSAStartup failed to initialize Winsock for RunPingTest.");
+        return {}; // return an empty vector
     }
 
-    std::vector<NetProfiler::PingResult> NetProfiler::RunPingTest(const std::string& host, int port, int count, int timeoutMs)
+
+    for (int i = 0; i < attempts; ++i)
     {
-        InitSockets();
-        std::vector<PingResult> results;
-        results.reserve(count);
-
-        for (int i = 0; i < count; ++i)
-        {
-            SOCKET sock = socket(AF_INET, SOCK_STREAM, 0);
-            if (sock == INVALID_SOCKET)
-            {
-                results.push_back({ 0, false });
-                continue;
-            }
-
-            sockaddr_in server{};
-            server.sin_family = AF_INET;
-            server.sin_port = htons(port);
-            server.sin_addr.s_addr = inet_addr(host.c_str());
-
-            auto start = std::chrono::high_resolution_clock::now();
-            bool success = (connect(sock, (sockaddr*)&server, sizeof(server)) == 0);
-            auto end = std::chrono::high_resolution_clock::now();
-
-            std::chrono::duration<double, std::milli> diff = end - start;
-            results.push_back({ diff.count(), success });
-
-#ifdef _WIN32
-            closesocket(sock);
-#else
-            close(sock);
-#endif
-        }
-
-        return results;
-    }
-
-    double NetProfiler::AverageLatency(const std::vector<PingResult>& results)
-    {
-        if (results.empty()) return 0.0;
-        double sum = 0.0;
-        int valid = 0;
-        for (const auto& r : results)
-        {
-            if (r.success)
-            {
-                sum += r.latencyMs;
-                ++valid;
-            }
-        }
-        return valid > 0 ? (sum / valid) : 0.0;
-    }
-
-    double NetProfiler::PacketLoss(const std::vector<PingResult>& results)
-    {
-        if (results.empty()) return 100.0;
-        int lost = 0;
-        for (const auto& r : results)
-            if (!r.success) ++lost;
-        return (static_cast<double>(lost) / results.size()) * 100.0;
-    }
-
-    double NetProfiler::EstimateDownloadSpeed(const std::string& host, int port, int seconds)
-    {
-        InitSockets();
+        auto start = std::chrono::high_resolution_clock::now();
 
         SOCKET sock = socket(AF_INET, SOCK_STREAM, 0);
-        if (sock == INVALID_SOCKET)
-            return 0.0;
-
-        sockaddr_in server{};
+        sockaddr_in server;
         server.sin_family = AF_INET;
         server.sin_port = htons(port);
         server.sin_addr.s_addr = inet_addr(host.c_str());
 
-        if (connect(sock, (sockaddr*)&server, sizeof(server)) != 0)
-        {
-#ifdef _WIN32
-            closesocket(sock);
-#else
-            close(sock);
-#endif
-            return 0.0;
-        }
-
-        // Send a small HTTP GET or dummy data
-        const char* request = "GET / HTTP/1.1\r\nHost: test\r\nConnection: close\r\n\r\n";
-        send(sock, request, static_cast<int>(strlen(request)), 0);
-
-        const int bufSize = 4096;
-        char buffer[bufSize];
-        int totalBytes = 0;
-        auto start = std::chrono::high_resolution_clock::now();
-
-        while (true)
-        {
-            int bytes = recv(sock, buffer, bufSize, 0);
-            if (bytes <= 0) break;
-            totalBytes += bytes;
-
-            auto now = std::chrono::high_resolution_clock::now();
-            std::chrono::duration<double> elapsed = now - start;
-            if (elapsed.count() >= seconds) break;
-        }
+        bool success = connect(sock, (sockaddr*)&server, sizeof(server)) != SOCKET_ERROR;
+        closesocket(sock);
 
         auto end = std::chrono::high_resolution_clock::now();
-        std::chrono::duration<double> total = end - start;
-        double kbPerSec = (totalBytes / 1024.0) / total.count();
+        double latency = std::chrono::duration<double, std::milli>(end - start).count();
 
-#ifdef _WIN32
-        closesocket(sock);
-#else
-        close(sock);
-#endif
-
-        return kbPerSec;
+        results.push_back({ success, latency });
+        std::this_thread::sleep_for(std::chrono::milliseconds(500));
     }
+
+    WSACleanup();
+    return results;
 }
+
+double NetProfiler::AverageLatency(const std::vector<PingResult>& results)
+{
+    double total = 0.0;
+    int count = 0;
+    for (auto& r : results)
+    {
+        if (r.success)
+        {
+            total += r.latencyMs;
+            ++count;
+        }
+    }
+    return count > 0 ? total / count : 0.0;
+}
+
+double NetProfiler::PacketLoss(const std::vector<PingResult>& results)
+{
+    int failed = 0;
+    for (auto& r : results)
+        if (!r.success)
+            ++failed;
+    return (static_cast<double>(failed) / results.size()) * 100.0;
+}
+
+double NetProfiler::EstimateDownloadSpeed(const std::string& host, int port, int seconds)
+{
+    WSADATA wsaData;
+    if (WSAStartup(MAKEWORD(2, 2), &wsaData) != 0)
+    {
+        HiveMnd::Core::LogUtils::Error("WSAStartup failed to initialize Winsock for RunPingTest.");
+        return {}; // return an empty vector
+    }
+
+
+    SOCKET sock = socket(AF_INET, SOCK_STREAM, 0);
+    sockaddr_in server;
+    server.sin_family = AF_INET;
+    server.sin_port = htons(port);
+    server.sin_addr.s_addr = inet_addr(host.c_str());
+
+    if (connect(sock, (sockaddr*)&server, sizeof(server)) == SOCKET_ERROR)
+    {
+        closesocket(sock);
+        WSACleanup();
+        return 0.0;
+    }
+
+    const int bufferSize = 4096;
+    char buffer[bufferSize];
+    int totalBytes = 0;
+    auto start = std::chrono::high_resolution_clock::now();
+
+    while (std::chrono::duration<double>(std::chrono::high_resolution_clock::now() - start).count() < seconds)
+    {
+        int bytes = recv(sock, buffer, bufferSize, 0);
+        if (bytes <= 0) break;
+        totalBytes += bytes;
+    }
+
+    closesocket(sock);
+    WSACleanup();
+
+    return (totalBytes / 1024.0) / seconds; // KB/s
+}
+
+// -----------------------------------------------------------------------------
+// LogNetworkReport() — integrates profiling results with HiveMnd::Core::LogUtils
+// -----------------------------------------------------------------------------
+void NetProfiler::LogNetworkReport(const std::string& host, int port)
+{
+    HiveMnd::Core::LogUtils::Info("Starting network diagnostics for host: " + host);
+
+    auto results = HiveMnd::NetProfiler::RunPingTest(host, port);
+    double avg = HiveMnd::NetProfiler::AverageLatency(results);
+    double loss = HiveMnd::NetProfiler::PacketLoss(results);
+
+    for (size_t i = 0; i < results.size(); ++i)
+    {
+        std::string msg = "Ping " + std::to_string(i + 1) + ": ";
+        msg += results[i].success ? std::to_string(results[i].latencyMs) + " ms" : "Failed";
+        HiveMnd::Core::LogUtils::Debug(msg);
+    }
+
+    HiveMnd::Core::LogUtils::Info("Average Latency: " + std::to_string(avg) + " ms");
+    HiveMnd::Core::LogUtils::Info("Packet Loss: " + std::to_string(loss) + "%");
+
+    double speed = HiveMnd::NetProfiler::EstimateDownloadSpeed(host, port, 2);
+    HiveMnd::Core::LogUtils::Info("Estimated Download Speed: " + std::to_string(speed) + " KB/s");
+
+    HiveMnd::Core::LogUtils::Success("Network diagnostics completed for host: " + host);
+}
+

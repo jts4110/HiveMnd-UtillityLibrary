@@ -84,6 +84,13 @@ void LogUtils::Write(const std::string& prefix,
         sLogFile << finalMsg << std::endl;
 }
 
+void HiveMnd::Core::LogUtils::Success(const std::string& message)
+{
+    // Green text for success
+    Write("[SUCCESS] ", message, "\x1b[32m");
+}
+
+
 // -----------------------------------------------------------------------------
 //  Function: Info
 // -----------------------------------------------------------------------------
