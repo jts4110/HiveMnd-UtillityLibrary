@@ -153,6 +153,7 @@
     <ClInclude Include="Core\SystemUtils.h" />
     <ClInclude Include="Core\TimeUtils.h" />
     <ClInclude Include="Math\MathConstants.h" />
+    <ClInclude Include="Math\MatrixUtils.h" />
     <ClInclude Include="Math\Quaternion.h" />
     <ClInclude Include="Math\Vector2.h" />
     <ClInclude Include="Math\Vector3.h" />
