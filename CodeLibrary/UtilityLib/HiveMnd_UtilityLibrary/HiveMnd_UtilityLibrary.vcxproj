@@ -143,6 +143,7 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</ExcludedFromBuild>
     </ClCompile>
     <ClCompile Include="Network\AdvancedNet.cpp" />
+    <ClCompile Include="Network\AsyncNet.cpp" />
     <ClCompile Include="Network\HttpUtils.cpp" />
     <ClCompile Include="Network\NetProfiler.cpp" />
     <ClCompile Include="Network\NetworkUtils.cpp" />
@@ -164,6 +165,7 @@
     <ClInclude Include="Math\Vector2.h" />
     <ClInclude Include="Math\Vector3.h" />
     <ClInclude Include="Network\AdvancedNet.h" />
+    <ClInclude Include="Network\AsyncNet.h" />
     <ClInclude Include="Network\HttpUtils.h" />
     <ClInclude Include="Network\NetProfiler.h" />
     <ClInclude Include="Network\NetworkUtils.h" />
