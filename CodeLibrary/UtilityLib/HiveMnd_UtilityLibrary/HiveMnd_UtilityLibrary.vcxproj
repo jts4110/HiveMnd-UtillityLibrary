@@ -153,6 +153,7 @@
     <ClCompile Include="Network\NetProfiler.cpp" />
     <ClCompile Include="Network\NetworkUtils.cpp" />
     <ClCompile Include="Network\SocketUtils.cpp" />
+    <ClCompile Include="Security\CryptoUtils.cpp" />
     <ClCompile Include="Threading\TaskScheduler.cpp" />
     <ClCompile Include="Threading\ThreadPool.cpp" />
   </ItemGroup>
@@ -172,6 +173,7 @@
     <ClInclude Include="Diagnostics\MemoryMonitor.h" />
     <ClInclude Include="Diagnostics\PerformanceProfiler.h" />
     <ClInclude Include="Diagnostics\SystemDiagnostics.h" />
+    <ClInclude Include="Security\CryptoUtils.h" />
     <ClInclude Include="Threading\TaskScheduler.h" />
     <ClInclude Include="Threading\ThreadPool.h" />
     <ClInclude Include="Threading\ThreadUtils.h" />
