@@ -90,6 +90,9 @@
     <ClCompile Include="Security\PasswordCrypto.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Security\PasswordVaultUtils.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Utility.h">
@@ -195,6 +198,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Security\PasswordCrypto.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Security\PasswordVaultUtils.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

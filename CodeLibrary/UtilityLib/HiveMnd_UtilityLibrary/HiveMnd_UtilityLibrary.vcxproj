@@ -156,6 +156,7 @@
     <ClCompile Include="Security\CryptoUtils.cpp" />
     <ClCompile Include="Security\HashUtils.cpp" />
     <ClCompile Include="Security\PasswordCrypto.cpp" />
+    <ClCompile Include="Security\PasswordVaultUtils.cpp" />
     <ClCompile Include="Threading\TaskScheduler.cpp" />
     <ClCompile Include="Threading\ThreadPool.cpp" />
   </ItemGroup>
@@ -178,6 +179,7 @@
     <ClInclude Include="Security\CryptoUtils.h" />
     <ClInclude Include="Security\HashUtils.h" />
     <ClInclude Include="Security\PasswordCrypto.h" />
+    <ClInclude Include="Security\PasswordVaultUtils.h" />
     <ClInclude Include="Threading\TaskScheduler.h" />
     <ClInclude Include="Threading\ThreadPool.h" />
     <ClInclude Include="Threading\ThreadUtils.h" />
