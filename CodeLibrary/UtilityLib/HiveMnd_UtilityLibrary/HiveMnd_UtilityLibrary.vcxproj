@@ -139,6 +139,7 @@
     <ClCompile Include="Data\JSONUtils.cpp" />
     <ClCompile Include="Diagnostics\MemoryMonitor.cpp" />
     <ClCompile Include="Diagnostics\PerformanceProfiler.cpp" />
+    <ClCompile Include="Diagnostics\SystemDiagnostics.cpp" />
     <ClCompile Include="hivemnd_utilitylibrary\HiveMnd_UtilityLibrary.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">false</ExcludedFromBuild>
@@ -168,6 +169,7 @@
     <ClInclude Include="Data\XMLUtils.h" />
     <ClInclude Include="Diagnostics\MemoryMonitor.h" />
     <ClInclude Include="Diagnostics\PerformanceProfiler.h" />
+    <ClInclude Include="Diagnostics\SystemDiagnostics.h" />
     <ClInclude Include="Threading\TaskScheduler.h" />
     <ClInclude Include="Threading\ThreadPool.h" />
     <ClInclude Include="Threading\ThreadUtils.h" />

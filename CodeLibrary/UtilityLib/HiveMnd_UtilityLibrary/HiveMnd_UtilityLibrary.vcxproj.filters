@@ -75,6 +75,9 @@
     <ClCompile Include="Diagnostics\MemoryMonitor.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Diagnostics\SystemDiagnostics.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Utility.h">
@@ -165,6 +168,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Diagnostics\MemoryMonitor.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Diagnostics\SystemDiagnostics.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
