@@ -1,75 +1,39 @@
-﻿// ============================================================================
-// HiveMnd Utility Library - Security Module
-// File: PasswordVaultUtils.h
-//
-// Description:
-//  A simple secure credential vault for HiveMnd applications.
-//  Uses AES-256 + PBKDF2-HMAC-SHA256 encryption (via PasswordCrypto).
-//
-// Features:
-//  - Securely stores service credentials (service → username/password).
-//  - Encrypted file storage (salt + IV handled automatically).
-//  - Supports add/remove/get operations.
-//  - Portable text-based format using Base64.
-//
-// Security Summary:
-//  - All sensitive data (usernames, passwords) are encrypted together
-//    using the master password.
-//  - Vault file can be safely synced or shared as long as the master
-//    password remains secret.
-//  - SHA256-HMAC integrity could be added later for tamper detection.
-//
-// Usage Example:
-//     HiveMnd::Security::PasswordVault vault("user_vault.hvault");
-//     vault.Load("MyMasterPassword");
-//     vault.AddCredential("GitHub", "JonSmith", "MyPass123!");
-//     vault.Save("MyMasterPassword");
-//     std::cout << vault.GetCredential("GitHub").username << std::endl;
-// ============================================================================
-
-#pragma once
+﻿#pragma once
 #include <string>
-#include <unordered_map>
+#include <vector>
 
 namespace HiveMnd::Security
 {
-    struct Credential
-    {
-        std::string username;
-        std::string password;
-    };
-
+    // -------------------------------------------------------------------------
+    // PasswordVault
+    // -------------------------------------------------------------------------
+    // Simple secure vault interface for storing and loading encrypted data.
+    // Currently uses a lightweight fallback encoder (hex) until Base64Utils
+    // is re-enabled.  Handles file I/O and string serialization.
+    // -------------------------------------------------------------------------
     class PasswordVault
     {
     private:
-        std::unordered_map<std::string, Credential> mCredentials;
         std::string mFilePath;
+        std::string mData;
 
     public:
-        PasswordVault(const std::string& path);
+        PasswordVault(const std::string& filePath = "HiveMndVault.dat")
+            : mFilePath(filePath) {
+        }
 
-        // Loads vault from disk and decrypts it
+        // Load existing vault from disk (auto-decrypts)
         bool Load(const std::string& masterPassword);
 
-        // Saves encrypted vault back to disk
+        // Save vault contents to disk (auto-encrypts)
         bool Save(const std::string& masterPassword) const;
 
-        // Add or update a credential
-        void AddCredential(const std::string& service,
-            const std::string& username,
-            const std::string& password);
+        // Access raw vault data
+        void SetData(const std::string& data) { mData = data; }
+        const std::string& GetData() const { return mData; }
 
-        // Remove a credential
-        void RemoveCredential(const std::string& service);
-
-        // Fetch a stored credential (throws if not found)
-        Credential GetCredential(const std::string& service) const;
-
-        // Lists all saved services
-        std::vector<std::string> ListServices() const;
-
-        // Clears all credentials (memory only)
-        void Clear();
+        // Change the vault file location
+        void SetFilePath(const std::string& path) { mFilePath = path; }
+        const std::string& GetFilePath() const { return mFilePath; }
     };
 }
-
