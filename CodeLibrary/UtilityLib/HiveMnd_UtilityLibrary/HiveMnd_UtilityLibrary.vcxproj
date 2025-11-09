@@ -137,6 +137,7 @@
     <ClCompile Include="Core\SystemUtils.cpp" />
     <ClCompile Include="Core\TimeUtils.cpp" />
     <ClCompile Include="Data\JSONUtils.cpp" />
+    <ClCompile Include="Diagnostics\DiagnosticsManager.cpp" />
     <ClCompile Include="Diagnostics\MemoryMonitor.cpp" />
     <ClCompile Include="Diagnostics\PerformanceProfiler.cpp" />
     <ClCompile Include="Diagnostics\SystemDiagnostics.cpp" />
@@ -167,6 +168,7 @@
     <ClInclude Include="Data\BinaryUtils.h" />
     <ClInclude Include="Data\CSVUtils.h" />
     <ClInclude Include="Data\XMLUtils.h" />
+    <ClInclude Include="Diagnostics\DiagnosticsManager.h" />
     <ClInclude Include="Diagnostics\MemoryMonitor.h" />
     <ClInclude Include="Diagnostics\PerformanceProfiler.h" />
     <ClInclude Include="Diagnostics\SystemDiagnostics.h" />

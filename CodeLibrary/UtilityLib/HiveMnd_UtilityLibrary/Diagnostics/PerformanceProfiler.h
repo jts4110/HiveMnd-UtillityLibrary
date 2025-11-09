@@ -1,79 +1,49 @@
 #pragma once
-#include <chrono>
 #include <string>
 #include <unordered_map>
+#include <chrono>
 #include <mutex>
 #include "../Core/LogUtils.h"
-#include "../Core/TimeUtils.h"
 
 //
 // HiveMnd :: Diagnostics :: PerformanceProfiler
 // ---------------------------------------------------------
-// Purpose : Provides timing and performance measurement tools
-//           for profiling code execution speed and stability.
+// Purpose : Provides high-precision performance timing tools
+//           for benchmarking code segments.
 //
 // Features:
-//  • Measure total runtime, delta time, and average FPS
-//  • Mark custom sections to measure their duration
-//  • Thread-safe (mutex protected)
-//  • Uses high-precision steady_clock
+//  • Start and stop named samples
+//  • Calculate elapsed times in ms
+//  • Thread-safe multi-sample support
+//  • Integrated with LogUtils for formatted output
 // ---------------------------------------------------------
 namespace HiveMnd::Diagnostics
 {
     class PerformanceProfiler
     {
     private:
-        using Clock = std::chrono::steady_clock;
-        static inline std::unordered_map<std::string, Clock::time_point> sSectionStart;
-        static inline std::unordered_map<std::string, double> sSectionDurations;
-        static inline Clock::time_point sLastFrameTime;
-        static inline double sDeltaTime;
-        static inline double sAverageFrameTime;
-        static inline size_t sFrameCount;
-        static inline std::mutex sMutex;
+        std::string mName;
+        std::unordered_map<std::string, std::chrono::high_resolution_clock::time_point> mStartTimes;
+        std::unordered_map<std::string, double> mDurations;
+        std::mutex mMutex;
 
     public:
-        // ---------------------------------------------------------------------
-        // Function: StartFrame
-        // Purpose : Marks the beginning of a new frame or update cycle.
-        // ---------------------------------------------------------------------
-        static void StartFrame();
+        // Constructor sets profile label
+        explicit PerformanceProfiler(const std::string& name = "UnnamedProfiler");
 
-        // ---------------------------------------------------------------------
-        // Function: EndFrame
-        // Purpose : Ends the current frame and updates delta time and averages.
-        // ---------------------------------------------------------------------
-        static void EndFrame();
+        // Begin timing a sample
+        void BeginSample(const std::string& label);
 
-        // ---------------------------------------------------------------------
-        // Function: GetDeltaTime
-        // Purpose : Returns time (in seconds) between the last two frames.
-        // ---------------------------------------------------------------------
-        static double GetDeltaTime();
+        // End timing a sample and record duration
+        void EndSample(const std::string& label);
 
-        // ---------------------------------------------------------------------
-        // Function: GetAverageFPS
-        // Purpose : Returns the rolling average FPS across frames.
-        // ---------------------------------------------------------------------
-        static double GetAverageFPS();
+        // Retrieve elapsed time for a sample
+        double GetElapsed(const std::string& label) const;
 
-        // ---------------------------------------------------------------------
-        // Function: BeginSection
-        // Purpose : Starts timing a named section (e.g., "Physics", "AI").
-        // ---------------------------------------------------------------------
-        static void BeginSection(const std::string& sectionName);
+        // Logs all recorded samples and averages
+        void LogSummary() const;
 
-        // ---------------------------------------------------------------------
-        // Function: EndSection
-        // Purpose : Ends a section and records its elapsed time in milliseconds.
-        // ---------------------------------------------------------------------
-        static void EndSection(const std::string& sectionName);
-
-        // ---------------------------------------------------------------------
-        // Function: Report
-        // Purpose : Logs a summary of all tracked section durations.
-        // ---------------------------------------------------------------------
-        static void Report();
+        // Clears stored sample data
+        void Reset();
     };
 }
-
