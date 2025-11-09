@@ -161,6 +161,8 @@
     <ClInclude Include="Core\StringUtils.h" />
     <ClInclude Include="Core\SystemUtils.h" />
     <ClInclude Include="Core\TimeUtils.h" />
+    <ClInclude Include="Data\CSVUtils.h" />
+    <ClInclude Include="Data\XMLUtils.h" />
     <ClInclude Include="Threading\TaskScheduler.h" />
     <ClInclude Include="Threading\ThreadPool.h" />
     <ClInclude Include="Threading\ThreadUtils.h" />

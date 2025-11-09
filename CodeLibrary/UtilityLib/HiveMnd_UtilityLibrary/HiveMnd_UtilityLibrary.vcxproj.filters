@@ -146,5 +146,11 @@
     <ClInclude Include="Threading\TaskScheduler.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Data\CSVUtils.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Data\XMLUtils.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
