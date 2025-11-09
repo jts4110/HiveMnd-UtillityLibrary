@@ -137,6 +137,7 @@
     <ClCompile Include="Core\SystemUtils.cpp" />
     <ClCompile Include="Core\TimeUtils.cpp" />
     <ClCompile Include="Data\JSONUtils.cpp" />
+    <ClCompile Include="Diagnostics\MemoryMonitor.cpp" />
     <ClCompile Include="Diagnostics\PerformanceProfiler.cpp" />
     <ClCompile Include="hivemnd_utilitylibrary\HiveMnd_UtilityLibrary.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
@@ -165,6 +166,7 @@
     <ClInclude Include="Data\BinaryUtils.h" />
     <ClInclude Include="Data\CSVUtils.h" />
     <ClInclude Include="Data\XMLUtils.h" />
+    <ClInclude Include="Diagnostics\MemoryMonitor.h" />
     <ClInclude Include="Diagnostics\PerformanceProfiler.h" />
     <ClInclude Include="Threading\TaskScheduler.h" />
     <ClInclude Include="Threading\ThreadPool.h" />
